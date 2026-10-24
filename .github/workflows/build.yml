@@ -1,7 +1,7 @@
 name: Build PCL2 No Auto Update
 on:
   push:
-    branches: [no-auto-update]
+    branches: [legacy-no-auto-update]
     tags: ['pcl2-*-no-autoupdate.*']
   pull_request:
   workflow_dispatch:
@@ -65,5 +65,5 @@ jobs:
             '{0}  {1}' -f (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant(), $_.Name
           }
           Set-Content dist/SHA256SUMS.txt -Value $sums -Encoding ascii
-          gh release create $env:GITHUB_REF_NAME dist/PCL2-NoAutoUpdate.exe dist/PCL2-NoAutoUpdate.zip dist/SHA256SUMS.txt --verify-tag --title 'PCL2 关闭自动更新版本 2.99.0-no-autoupdate.1（第三方修改）' --notes-file RELEASE_NOTES.md
+          gh release create $env:GITHUB_REF_NAME dist/PCL2-NoAutoUpdate.exe dist/PCL2-NoAutoUpdate.zip dist/SHA256SUMS.txt --verify-tag --latest --title 'PCL2 2.14.0 旧版关闭自动更新（保留游戏下载，第三方修改）' --notes-file RELEASE_NOTES.md
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
