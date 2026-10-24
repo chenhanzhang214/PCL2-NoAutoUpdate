@@ -15,7 +15,7 @@ Public Module ModBase
 #End If
 
     '版本信息
-    Public Const VersionDisplay As String = BuildTypeDisplay & " " & VersionBaseName
+    Public Const VersionDisplay As String = BuildTypeDisplay & " " & VersionBaseName & "（第三方关闭自动更新版本）"
 #If DEBUG Then
     Public Const BuildTypeDisplay As String = "开发版"
     Public Const BuildType As BuildTypes = BuildTypes.Debug

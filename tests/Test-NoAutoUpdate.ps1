@@ -16,7 +16,8 @@ $cases = @(
     @{ Name='update argument after another flag'; Args=@('--unused', '--update') }
 )
 foreach ($case in $cases) {
-    $process = Start-Process -FilePath $exe -ArgumentList $case.Args -WorkingDirectory $testDir -WindowStyle Hidden -PassThru
+    $arguments = ($case.Args | ForEach-Object { '"' + $_ + '"' }) -join ' '
+    $process = Start-Process -FilePath $exe -ArgumentList $arguments -WorkingDirectory $testDir -WindowStyle Hidden -PassThru
     if (-not $process.WaitForExit(15000)) {
         $process.Kill()
         throw "$($case.Name): process did not reject the update command within 15 seconds."

@@ -1,0 +1,15 @@
+PCL2 关闭自动更新版本（第三方独立修改），基于 PCL 官方公开源码 2.99.0.0，基线提交 `6b9a50df911c9d68b69b24c979efba477fb14b67`。
+
+- 固定关闭启动器自动更新，覆盖旧配置，禁用设置页与关于页的更新入口。
+- 旧的 `--update` 命令在初始化前直接返回失败代码 1，停止自动替换文件与更新重启流程。
+- 窗口标题、版本、文件属性与关于页明确标注第三方关闭自动更新版本。
+- 保留龙腾猫跃及其他贡献者署名、原许可、蓝色主题及正版购买和赞助劝导。原作者赞助：https://meloong.com/afd/a/LTCat
+
+下载 `PCL2-NoAutoUpdate.zip` 后解压运行，也可下载单独的 EXE；使用 `SHA256SUMS.txt` 校验。运行需要 64 位 Windows 和 .NET Framework 4.8。
+
+公开源码本身已经不包含完整官方更新器。本版本在此基础上固定关闭并清理残留入口。正版登录需自行提供 `PCL_MS_CLIENT_ID`，CurseForge API 调用需 `PCL_CURSEFORGE_API_KEY`，不包含官方私有凭据。注册表与官方版隔离，部分偏好和登录信息需重新配置。后续版本需手动下载替换。
+
+发布前由 GitHub Actions 完成 Release 编译，并运行四种真实更新命令，验证均拒绝执行且不修改验证文件。未验证全部登录、游戏启动和资源下载场景。
+
+源码与说明：https://github.com/chenhanzhang214/PCL2-NoAutoUpdate
+问题反馈请提交到本 Fork。
