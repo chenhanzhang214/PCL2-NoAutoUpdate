@@ -9,7 +9,7 @@ Public Class Application
             '核心初始化
             MeloongCore.Main.Init("PCL")
             MeloongCore.Wpf.Main.Init()
-            If Not (e.Args.Contains("--update") OrElse e.Args.Contains("--gpu") OrElse e.Args.Contains("--memory")) Then '若是通过命令行调用，则不检查单例、不轮换日志（#9137）
+            If Not (e.Args.Contains("--gpu") OrElse e.Args.Contains("--memory")) Then '若是通过命令行调用，则不检查单例、不轮换日志（#9137）
                 WaitingMutex(e)
                 Logger.Instance = New PclLogger With {.logFolder = Paths.BaseThenName, .MinLevel = If(ModeDebug, LogLevel.Trace, LogLevel.Info)}
             End If
@@ -38,11 +38,7 @@ Public Class Application
             End Try
             '检查参数调用
             If e.Args.Length > 0 Then
-                If e.Args(0) = "--update" Then
-                    '自动更新
-                    UpdateReplace(e.Args(1), e.Args(2).Trim(""""), e.Args(3).Trim(""""), e.Args(4))
-                    Environment.Exit(ProcessReturnValues.TaskDone)
-                ElseIf e.Args(0) = "--gpu" Then
+                If e.Args(0) = "--gpu" Then
                     '调整显卡设置
                     Try
                         SetGPUPreference(e.Args(1).Trim(""""))
@@ -106,6 +102,8 @@ RetryCacheCheck:
             If Environment.OSVersion.Version < New Version(6, 2) Then 'Windows 7 回退（#8519）
                 ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 Or SecurityProtocolType.Tls Or SecurityProtocolType.Tls11 Or SecurityProtocolType.Tls12
             End If
+            '关闭自动更新；覆盖同目录中从其他版本继承的设置。
+            Settings.Set("SystemSystemUpdate", 3)
             '设置初始窗口
             If Settings.Get(Of Boolean)("UiLauncherLogo") Then
                 FrmStart = New SplashScreen("Images\icon.ico")
@@ -216,6 +214,8 @@ RetryCacheCheck:
 
     '动态 DLL 加载
     Private Sub New() '这里必须尽早调用，且不能使用任何库，否则加载 MeloongCore 就会导致崩溃
+        '在初始化、读写配置和解析更新参数前拒绝旧更新命令。1 表示执行失败。
+        If Array.IndexOf(Environment.GetCommandLineArgs(), "--update") >= 0 Then Environment.Exit(1)
         Static Prefixes As String() = {"NAudio", "Newtonsoft.Json", "Ookii.Dialogs.Wpf", "Imazen.WebP", "CacheCow.Common", "CacheCow.Client.FileStore", "CacheCow.Client", "ThrottleDebounce", "System.Net.Http.Formatting", "Microsoft.Win32.Registry", "PCLCS", "MeloongCore.Wpf", "MeloongCore"}
         Static LoadedAssemblies As New ConcurrentDictionary(Of String, Lazy(Of Assembly))(StringComparer.Ordinal) '缓存
         AddHandler AppDomain.CurrentDomain.AssemblyResolve,
